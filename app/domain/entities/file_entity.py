@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from app.domain.value.file_status import FileStatus
+from app.core.logging.logger_main import logger
 
 
 @dataclass(frozen=True, slots=True)
@@ -32,6 +33,9 @@ class FileEntity:
         if self.status != FileStatus.PROCESSING:
             raise ValueError(f"File {self.id} cannot be completed from {self.status}")
         self.status = FileStatus.COMPLETED
+        logger.info(
+            f"The status of the file with ID {self.id} has been successfully changed to {FileStatus.COMPLETED}"
+        )
         
         
     def mark_failed(self, reason: str = "") -> None:
@@ -42,3 +46,6 @@ class FileEntity:
         if not self.can_be_processed():
             raise ValueError(f"File {self.id} cannot be processed")
         self.status = FileStatus.PROCESSING
+        logger.info(
+            f"The status of the file with ID {self.id} has been successfully changed to {FileStatus.PROCESSING}"
+        )

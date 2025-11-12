@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from app.core.config.config_reader import settings
+from app.core.logging.logger_main import logger
 
 from typing import AsyncGenerator
 
@@ -32,8 +33,11 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
         try:
             yield session
             await session.commit()
+            logger.info("Changes was commited successfully")
         except Exception:
             await session.rollback()
+            logger.exception("The session returned an error")
             raise
         finally:
             await session.close()
+            logger.info("Session closed successfully")
